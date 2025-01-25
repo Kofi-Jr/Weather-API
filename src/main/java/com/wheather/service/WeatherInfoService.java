@@ -14,9 +14,28 @@ public class WeatherInfoService {
     private WeatherInfoRepo weatherInfoRepo;
 
 
-    public WeatherInfo creatWeatherInfo(WeatherInfo weatherInfo){
+    public WeatherInfo createWeatherInfo(WeatherInfo weatherInfo){
 
         return weatherInfoRepo.save(weatherInfo);
+    }
+
+    public WeatherInfo updateWeatherInfo(int id, WeatherInfo weatherInfo) {
+        Optional<WeatherInfo> existingWeatherInfo = weatherInfoRepo.findById(id);
+
+        if (!existingWeatherInfo.isPresent()) {
+            return null; // Return null if the resource isn't found
+        }
+        WeatherInfo updatedWeatherInfo = existingWeatherInfo.get();
+        // Use the existing fields to update the temperature
+        updatedWeatherInfo.setTodayTemp(weatherInfo.getTodayTemp());  // Update today's temperature
+        updatedWeatherInfo.setYesterdayTemp(weatherInfo.getYesterdayTemp());  // Optionally update yesterday's temp
+        updatedWeatherInfo.setTomorrowTemp(weatherInfo.getTomorrowTemp());  // Optionally update tomorrow's temp
+
+        // Update the city name
+        updatedWeatherInfo.setCityName(weatherInfo.getCityName());
+
+        // Save and return the updated WeatherInfo object
+        return weatherInfoRepo.save(updatedWeatherInfo);
     }
 
     public Optional<WeatherInfo> getWeatherInfoById(int id) {

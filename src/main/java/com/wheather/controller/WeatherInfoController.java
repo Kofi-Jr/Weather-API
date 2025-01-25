@@ -19,9 +19,25 @@ public class WeatherInfoController {
     @PostMapping("/create")
     public ResponseEntity<WeatherInfo> createWeatherInfo(@RequestBody WeatherInfo weatherInfo){
 
-        WeatherInfo savedWeatherInfo = weatherInfoService.creatWeatherInfo(weatherInfo);
+        WeatherInfo savedWeatherInfo = weatherInfoService.createWeatherInfo(weatherInfo);
 
         return new ResponseEntity<>(savedWeatherInfo, HttpStatus.CREATED);
+    }
+
+
+    @PutMapping("/weather/{id}")
+    public ResponseEntity<WeatherInfo> updateWeatherInfo(@PathVariable int id, @RequestBody WeatherInfo weatherInfo) {
+
+        // Pass both the id and the weatherInfo to the service layer
+        WeatherInfo updatedWeatherInfo = weatherInfoService.updateWeatherInfo(id, weatherInfo);
+
+        if (updatedWeatherInfo == null) {
+            // If the weather info with that ID doesn't exist, return a not found response
+            return ResponseEntity.notFound().build();
+        }
+
+        // Return the updated weather info with 200 OK status
+        return ResponseEntity.ok(updatedWeatherInfo);
     }
 
     @GetMapping("/weather/{id}")
