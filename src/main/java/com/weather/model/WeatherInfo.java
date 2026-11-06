@@ -1,20 +1,35 @@
-package com.wheather.model;
+package com.weather.model;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.validation.constraints.NotBlank;
 
-// Entity Class
-// Map to DB
+/**
+ * One city's temperatures for three days: yesterday, today and tomorrow.
+ * Mapped to the {@code weather_info} table. The id is supplied by the client
+ * when a record is created.
+ */
 @Entity
 public class WeatherInfo {
 
-    //5 fields
     @Id
-    private int id; // Map id to database tables
+    private int id;
+    @NotBlank(message = "cityName must not be blank")
     private String cityName;
     private double yesterdayTemp;
     private double todayTemp;
     private double tomorrowTemp;
+
+    public WeatherInfo() {
+    }
+
+    public WeatherInfo(int id, String cityName, double yesterdayTemp, double todayTemp, double tomorrowTemp) {
+        this.id = id;
+        this.cityName = cityName;
+        this.yesterdayTemp = yesterdayTemp;
+        this.todayTemp = todayTemp;
+        this.tomorrowTemp = tomorrowTemp;
+    }
 
     public int getId() {
         return id;

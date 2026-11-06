@@ -1,6 +1,6 @@
-package com.wheather.repository;
+package com.weather.repository;
 
-import com.wheather.model.WeatherInfo;
+import com.weather.model.WeatherInfo;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 

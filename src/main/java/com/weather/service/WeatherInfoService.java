@@ -1,37 +1,36 @@
-package com.wheather.service;
+package com.weather.service;
 
-import com.wheather.model.WeatherInfo;
-import com.wheather.repository.WeatherInfoRepo;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.weather.model.WeatherInfo;
+import com.weather.repository.WeatherInfoRepo;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
 public class WeatherInfoService {
 
-    @Autowired //dependency injection
-    private WeatherInfoRepo weatherInfoRepo;
+    private final WeatherInfoRepo weatherInfoRepo;
 
+    public WeatherInfoService(WeatherInfoRepo weatherInfoRepo) {
+        this.weatherInfoRepo = weatherInfoRepo;
+    }
 
-    public WeatherInfo createWeatherInfo(WeatherInfo weatherInfo){
-
+    public WeatherInfo createWeatherInfo(WeatherInfo weatherInfo) {
         return weatherInfoRepo.save(weatherInfo);
     }
 
     public WeatherInfo updateWeatherInfo(int id, WeatherInfo weatherInfo) {
         Optional<WeatherInfo> existingWeatherInfo = weatherInfoRepo.findById(id);
 
-        if (!existingWeatherInfo.isPresent()) {
+        if (existingWeatherInfo.isEmpty()) {
             return null; // Return null if the resource isn't found
         }
         WeatherInfo updatedWeatherInfo = existingWeatherInfo.get();
-        // Use the existing fields to update the temperature
-        updatedWeatherInfo.setTodayTemp(weatherInfo.getTodayTemp());  // Update today's temperature
-        updatedWeatherInfo.setYesterdayTemp(weatherInfo.getYesterdayTemp());  // Optionally update yesterday's temp
-        updatedWeatherInfo.setTomorrowTemp(weatherInfo.getTomorrowTemp());  // Optionally update tomorrow's temp
-
-        // Update the city name
+        // Update the temperatures and the city name from the request body.
+        updatedWeatherInfo.setTodayTemp(weatherInfo.getTodayTemp());
+        updatedWeatherInfo.setYesterdayTemp(weatherInfo.getYesterdayTemp());
+        updatedWeatherInfo.setTomorrowTemp(weatherInfo.getTomorrowTemp());
         updatedWeatherInfo.setCityName(weatherInfo.getCityName());
 
         // Save and return the updated WeatherInfo object
@@ -39,14 +38,15 @@ public class WeatherInfoService {
     }
 
     public Optional<WeatherInfo> getWeatherInfoById(int id) {
-
         return weatherInfoRepo.findById(id);
     }
 
-    public boolean deleteWeatherInfoById(int id) {
-        Optional<WeatherInfo> weatherInfo = weatherInfoRepo.findById(id);
+    public List<WeatherInfo> getAllWeatherInfo() {
+        return weatherInfoRepo.findAll();
+    }
 
-        if (weatherInfo.isPresent()) {
+    public boolean deleteWeatherInfoById(int id) {
+        if (weatherInfoRepo.findById(id).isPresent()) {
             weatherInfoRepo.deleteById(id); // Perform deletion
             return true; // Return true if deletion was successful
         }

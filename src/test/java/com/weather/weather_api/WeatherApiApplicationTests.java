@@ -1,4 +1,4 @@
-package com.wheather.weather_api;
+package com.weather.weather_api;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

@@ -1,33 +1,34 @@
-package com.wheather.controller;
+package com.weather.controller;
 
-import com.wheather.model.WeatherInfo;
-import com.wheather.service.WeatherInfoService;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.weather.model.WeatherInfo;
+import com.weather.service.WeatherInfoService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 @RestController
 public class WeatherInfoController {
 
-    @Autowired
-    private WeatherInfoService weatherInfoService;
+    private final WeatherInfoService weatherInfoService;
 
-    //Response entity allows me to set the https status code explicitly
+    public WeatherInfoController(WeatherInfoService weatherInfoService) {
+        this.weatherInfoService = weatherInfoService;
+    }
+
+    // ResponseEntity allows me to set the HTTP status code explicitly
     @PostMapping("/create")
-    public ResponseEntity<WeatherInfo> createWeatherInfo(@RequestBody WeatherInfo weatherInfo){
-
+    public ResponseEntity<WeatherInfo> createWeatherInfo(@Valid @RequestBody WeatherInfo weatherInfo) {
         WeatherInfo savedWeatherInfo = weatherInfoService.createWeatherInfo(weatherInfo);
 
         return new ResponseEntity<>(savedWeatherInfo, HttpStatus.CREATED);
     }
 
-
     @PutMapping("/weather/{id}")
-    public ResponseEntity<WeatherInfo> updateWeatherInfo(@PathVariable int id, @RequestBody WeatherInfo weatherInfo) {
-
+    public ResponseEntity<WeatherInfo> updateWeatherInfo(@PathVariable int id, @Valid @RequestBody WeatherInfo weatherInfo) {
         // Pass both the id and the weatherInfo to the service layer
         WeatherInfo updatedWeatherInfo = weatherInfoService.updateWeatherInfo(id, weatherInfo);
 
@@ -40,10 +41,14 @@ public class WeatherInfoController {
         return ResponseEntity.ok(updatedWeatherInfo);
     }
 
+    @GetMapping("/weather")
+    public ResponseEntity<List<WeatherInfo>> getAllWeatherInfo() {
+        return ResponseEntity.ok(weatherInfoService.getAllWeatherInfo());
+    }
+
     @GetMapping("/weather/{id}")
     public ResponseEntity<WeatherInfo> getWeatherInfoById(@PathVariable("id") int id) {
-
-        // optional is to avoid null pointer exceptions
+        // Optional is used to avoid null pointer exceptions
         Optional<WeatherInfo> getWeatherInfo = weatherInfoService.getWeatherInfoById(id);
         if (getWeatherInfo.isPresent()) {
             return new ResponseEntity<>(getWeatherInfo.get(), HttpStatus.OK);
